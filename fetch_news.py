@@ -10,29 +10,32 @@ RSS_FEEDS = [
     "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
     "https://timesofindia.indiatimes.com/rssfeedstopstories.xml",
     "https://feeds.feedburner.com/NDTV-LatestNews.xml",
-    
 ]
+
+# Limit concurrency to 5 articles at a time
+semaphore = asyncio.Semaphore(5)
 
 async def fetch_article(url: str):
     """Download and parse a single article using a thread to avoid blocking."""
-    try:
-        def download_parse():
-            article = Article(url)
-            article.download()
-            article.parse()
-            return article
+    async with semaphore:
+        try:
+            def download_parse():
+                article = Article(url)
+                article.download()
+                article.parse()
+                return article
 
-        article = await asyncio.to_thread(download_parse)
+            article = await asyncio.to_thread(download_parse)
 
-        if article.title and article.text:
-            return {
-                "title": article.title,
-                "text": article.text,
-                "url": url
-            }
-    except Exception as e:
-        print(f" Failed to fetch {url}: {e}")
-    return None
+            if article.title and article.text:
+                return {
+                    "title": article.title,
+                    "text": article.text,
+                    "url": url
+                }
+        except Exception as e:
+            print(f" Failed to fetch {url}: {e}")
+        return None
 
 async def fetch_news_from_rss(max_articles_per_feed: int = 12):
     """Fetch news and store in Redis cache."""
@@ -49,7 +52,7 @@ async def fetch_news_from_rss(max_articles_per_feed: int = 12):
         for entry in feed.entries[:max_articles_per_feed]:
             tasks.append(fetch_article(entry.link))
 
-    # Run all fetches concurrently
+    # Run fetches with limited concurrency
     results = await asyncio.gather(*tasks)
     articles = [a for a in results if a]
 
