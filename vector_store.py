@@ -8,7 +8,7 @@ from redis.commands.search.query import Query
 
 #config
 EMBED_DIM = 384
-model = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+model = SentenceTransformer("paraphrase-albert-small-v2")
 
 
 def get_embedding(text:str):
