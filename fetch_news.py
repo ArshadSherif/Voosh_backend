@@ -34,7 +34,7 @@ async def fetch_article(url: str):
         print(f" Failed to fetch {url}: {e}")
     return None
 
-async def fetch_news_from_rss(max_articles_per_feed: int = 10):
+async def fetch_news_from_rss(max_articles_per_feed: int = 15):
     """Fetch news and store in Redis cache."""
     
     # Check cache first
