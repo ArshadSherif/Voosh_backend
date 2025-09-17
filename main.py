@@ -11,7 +11,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:8080",  # React dev server
-    "https://your-frontend-domain.com",  # production
+    "https://voosh-frontend-azure.vercel.app",  # production
 ]
 
 app.add_middleware(
