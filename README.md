@@ -36,7 +36,7 @@ A Retrieval-Augmented Generation (RAG) chatbot that provides news-based answers 
 
 - **Session Management:**
   - Unique session IDs
-  - Redis-backed chat history (30 mins TTL)
+  - Redis-backed chat history (1 hour TTL)
   - History retrieval/New Session apis
 
 - **Streaming:**
